@@ -23,6 +23,11 @@ def start_game(message):
     else:
         bot.reply_to(message, "❌ У тебя уже есть покемон! Используй /my_pokemon, чтобы посмотреть информацию.")
 
+@bot.message_handler(commands=['info'])
+def info_handler(message):
+    if message.from_user.username in Pokemon.pokemons.keys():
+        pok = Pokemon.pokemons[message.from_user.username]
+        bot.send_message(message.chat.id, pok.info())
 
 @bot.message_handler(commands=['my_pokemon'])
 def show_my_pokemon(message):
