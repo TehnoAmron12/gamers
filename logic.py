@@ -1,4 +1,5 @@
 import random
+from datetime import datetime, timedelta 
 
 class Pokemon:
     pokemons = {}
@@ -14,6 +15,10 @@ class Pokemon:
         self.hp = random.randint(50, 100)
         self.power = random.randint(10, 20)
         self.wins = 0
+        
+        self.feed_interval = 60
+
+        self.last_feed_time = datetime.now() - timedelta(seconds=self.feed_interval)
 
         if trainer_name:
             Pokemon.pokemons[trainer_name] = self
@@ -26,7 +31,31 @@ class Pokemon:
                 f"📊 Уровень: {self.level} | 🏆 Побед: {self.wins}")
 
     def feed(self):
+        now = datetime.now()
+        next_feed_time = self.last_feed_time + timedelta(seconds=self.feed_interval)
+        
+        if now < next_feed_time:
+            remaining_time = int((next_feed_time - now).total_seconds())
+            return f"⏳ {self.name} еще не голоден. Вы сможете покормить его через {remaining_time} сек.", False
+
+        self.last_feed_time = now
         self.fed_count += 1
+        
+        if isinstance(self, Wizard):
+            max_hp = 150
+            heal_amount = 25
+        elif isinstance(self, Fighter):
+            max_hp = 90
+            heal_amount = 10
+        elif isinstance(self, Warlock):
+            max_hp = 110
+            heal_amount = 10
+        else:
+            max_hp = 100
+            heal_amount = 10
+            
+        self.hp = min(max_hp, self.hp + heal_amount)
+
         gained_exp = random.randint(15, 35)
         if self.rarity == "Легендарный":
             gained_exp += 20  
@@ -36,6 +65,7 @@ class Pokemon:
         if self.experience >= self.level * 50:
             self.level += 1
             level_up = True
+            
         return gained_exp, level_up
 
     def attack(self, enemy):
@@ -78,13 +108,31 @@ class Pokemon:
 
 
 class Wizard(Pokemon):
-    def __init__(self, name: str, pokemon_type: str, rarity: str = "Обычный", trainer_name: str = None):
-        super().__init__(name, pokemon_type, rarity, trainer_name)
-        self.hp = random.randint(110, 150)
-        self.power = random.randint(8, 15)
-
     def info(self):
         return "🔮 **Класс: ВОЛШЕБНИК**\n" + super().info()
+
+        return super().feed(feed_interval=20, hp_increase=25)
+
+
+class Fighter(Pokemon):
+    def info(self):
+        return "🥊 **Класс: БОЕЦ**\n" + super().info()
+
+    def attack(self, enemy):
+        if self.hp <= 0:
+            return f"❌ @{self.pokemon_trainer}, твой покемон повержен!"
+            
+        super_power = random.randint(5, 15)
+        self.power += super_power
+        result = super().attack(enemy)
+        self.power -= super_power
+        
+        if "заблокировал весь урон" not in result and "без сил" not in result:
+            return result + f"\n⚡ Боец применил супер-удар силой: +{super_power}!"
+        return result
+
+    def feed(self):
+        return super().feed(feed_interval=10, hp_increase=10)
 
 
 class Fighter(Pokemon):
@@ -92,6 +140,7 @@ class Fighter(Pokemon):
         super().__init__(name, pokemon_type, rarity, trainer_name)
         self.hp = random.randint(60, 90)
         self.power = random.randint(18, 28)
+        self.feed_interval = 30  
 
     def info(self):
         return "🥊 **Класс: БОЕЦ**\n" + super().info()
