@@ -135,6 +135,7 @@ class Fighter(Pokemon):
         return super().feed(feed_interval=10, hp_increase=10)
 
 
+
 class Fighter(Pokemon):
     def __init__(self, name: str, pokemon_type: str, rarity: str = "Обычный", trainer_name: str = None):
         super().__init__(name, pokemon_type, rarity, trainer_name)
@@ -149,15 +150,18 @@ class Fighter(Pokemon):
         if self.hp <= 0:
             return f"❌ @{self.pokemon_trainer}, твой покемон повержен!"
             
+
         super_power = random.randint(5, 15)
-        self.power += super_power
-        result = super().attack(enemy)
-        self.power -= super_power
+        self.power += super_power     
         
+        result = super().attack(enemy)  
+        
+        self.power -= super_power         
+
         if "заблокировал весь урон" not in result and "без сил" not in result:
             return result + f"\n⚡ Боец применил супер-удар силой: +{super_power}!"
+        
         return result
-
 
 class Warlock(Pokemon):
     def __init__(self, name: str, pokemon_type: str, rarity: str = "Обычный", trainer_name: str = None):

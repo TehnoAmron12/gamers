@@ -46,7 +46,7 @@ class Gamer:
         self.games.append(game)
 
     def introduce(self):
-        print(
+        return (
             f"Привет, меня зовут {self.name}, мне {self.age} лет. "
             f"Всегда на связи по {self.email}. "
             f"Ищи меня в игре по нику {self.nickname}"
@@ -79,7 +79,7 @@ class Gamer:
         print(f"🎮 Пойман покемон: {new_pokemon.name} ({new_pokemon.pokemon_type}). Редкость: {new_pokemon.rarity}!")
         print(bonus_msg)
         return new_pokemon
-
+    pass
 
 if __name__ == "__main__":
     gamer1 = Gamer("Иван", 14, "John", "john@gmail.com")
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     gamer1.add_game("Minecraft")
     gamer1.add_game("Dota 2")
     
-    gamer1.introduce()
+    print(gamer1.introduce())
     print(f"{gamer1.name} любит игры: {', '.join(gamer1.games)}")
     
     my_pokemon = gamer1.catch_pokemon_from_api()
